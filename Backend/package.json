@@ -1,12 +1,12 @@
 {
-  "name": "10-e-commerce-api",
+  "name": "Movie-Booking-System",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
   "scripts": {
     "start": "nodemon app.js"
   },
-  "author": "",
+  "author": "Aratrik Chandra",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
