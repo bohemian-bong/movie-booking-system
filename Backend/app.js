@@ -24,6 +24,7 @@ const productRouter = require('./routes/productRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 const showtimeRouter = require('./routes/showTimeRoutes')
 //const orderRouter = require('./routes/orderRoutes');
+app.use(cors());
 
 // middleware
 const notFoundMiddleware = require('./middleware/not-found');
@@ -37,14 +38,13 @@ app.use(
   })
 );
 app.use(helmet());
-app.use(cors());
 app.use(xss());
 app.use(mongoSanitize());
 
 app.use(express.json());
 app.use(cookieParser(process.env.JWT_SECRET));
 
-app.use(express.static('./public'));
+//app.use(express.static('./public'));
 app.use(fileUpload());
 
 app.use('/api/v1/auth', authRouter);
