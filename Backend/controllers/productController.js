@@ -19,7 +19,7 @@ const getSingleProduct = async (req, res) => {
   const product = await Product.findOne({ _id: productId }).populate('reviews');
 
   if (!product) {
-    throw new CustomError.NotFoundError(`No product with id : ${productId}`);
+    throw new CustomError.NotFoundError(`No movie with id : ${productId}`);
   }
 
   res.status(StatusCodes.OK).json({ product });
@@ -33,7 +33,7 @@ const updateProduct = async (req, res) => {
   });
 
   if (!product) {
-    throw new CustomError.NotFoundError(`No product with id : ${productId}`);
+    throw new CustomError.NotFoundError(`No movie with id : ${productId}`);
   }
 
   res.status(StatusCodes.OK).json({ product });
@@ -44,11 +44,11 @@ const deleteProduct = async (req, res) => {
   const product = await Product.findOne({ _id: productId });
 
   if (!product) {
-    throw new CustomError.NotFoundError(`No product with id : ${productId}`);
+    throw new CustomError.NotFoundError(`No movie with id : ${productId}`);
   }
 
   await product.remove();
-  res.status(StatusCodes.OK).json({ msg: 'Success! Product removed.' });
+  res.status(StatusCodes.OK).json({ msg: 'Success! movie removed.' });
 };
 const uploadImage = async (req, res) => {
   if (!req.files) {
