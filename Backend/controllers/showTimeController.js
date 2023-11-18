@@ -11,7 +11,7 @@ const createShowTime = async (req, res) => {
   const isValidProduct = await Product.findOne({ _id: productId });
 
   if (!isValidProduct) {
-    throw new CustomError.NotFoundError(`No product with id : ${productId}`);
+    throw new CustomError.NotFoundError(`No showtime with id : ${productId}`);
   }
 
   const showtime = await ShowTime.create(req.body);
@@ -35,9 +35,9 @@ const getSingleShowTime = async (req, res) => {
 };
 const updateShowTime = async (req, res) => {
   const { id: showtimeId } = req.params;
-  const { startAt, startDate, endDate } = req.body;
-  if (!startAt || !startDate || !endDate) {
-    throw new CustomError.BadRequestError('Please provide all values');
+  const { startAt, startDate, endDate , price} = req.body;
+  if (!startAt || !startDate || !endDate || !price) {
+    throw new CustomError.BadRequestError('Please provide all values : startAt, startDate, endDate, price');
   }
   const showtime = await ShowTime.findOne({ _id: showtimeId });
 
@@ -48,6 +48,7 @@ const updateShowTime = async (req, res) => {
   showtime.endDate = endDate;
   showtime.startDate = startDate;
   showtime.startAt = startAt;
+  showtime.price = price;
 
   await showtime.save();
   res.status(StatusCodes.OK).json({ showtime });
