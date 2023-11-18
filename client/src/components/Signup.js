@@ -1,38 +1,36 @@
-// Login.js
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-const Login = (props) => {
+const Signup = (props) => {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
-
-  const handleLogin = async (e) => {
+  const setUser = props.setUser;
+  const handleSignup = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:5000/api/v1/auth/login', {
+      const response = await fetch('http://localhost:5000/api/v1/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
-        credentials: 'include',
+        body: JSON.stringify({ name, email, password }),
       });
       const data = await response.json();
-        console.log(data);
       if (response.ok) {
+        // Signup successful
+        // Redirect to the home page after successful signup
         
-        // Redirect to the home page after successful login
-        console.log(document.cookie)
-        props.setUser(data);
+        console.log(data)
+        setUser(data)
         navigate('/', { replace: true });
       } else {
-        const data = await response.json();
-        console.error('Login failed:', data.message);
+        console.error('Signup failed:', data.message);
       }
     } catch (error) {
-      console.error('Login failed:', error.message);
+      console.error('Signup failed:', error.message);
     }
   };
 
@@ -42,8 +40,21 @@ const Login = (props) => {
         <div className="col-md-6">
           <div className="card">
             <div className="card-body">
-              <h2 className="card-title text-center">Login</h2>
-              <form onSubmit={handleLogin}>
+              <h2 className="card-title text-center">Signup</h2>
+              <form onSubmit={handleSignup}>
+                <div className="mb-3">
+                  <label htmlFor="name" className="form-label">
+                    Name
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                  />
+                </div>
                 <div className="mb-3">
                   <label htmlFor="email" className="form-label">
                     Email
@@ -71,10 +82,10 @@ const Login = (props) => {
                   />
                 </div>
                 <button type="submit" className="btn btn-primary">
-                  Login
+                  Signup
                 </button>
                 <p className="mt-3 text-center">
-                  New User? <Link to="/signup">Signup</Link>
+                  Already have an account? <Link to="/login">Login</Link>
                 </p>
               </form>
             </div>
@@ -85,4 +96,4 @@ const Login = (props) => {
   );
 };
 
-export default Login;
+export default Signup;

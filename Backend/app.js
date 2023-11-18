@@ -40,7 +40,7 @@ app.use(
   })
 );
 app.use(helmet());
-app.use(xss());
+//app.use(xss());
 app.use(mongoSanitize());
 
 app.use(express.json());

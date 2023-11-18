@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
 import ProductItem from "./ProductItem";
 
-export default function Home(){
+export default function Home(props){
     const [products, setproducts] = useState([]);
     useEffect(()=>{
         const getProducts = async ()=>{
@@ -18,7 +18,7 @@ export default function Home(){
             <h3 className="my-4">Movies Showing Now...</h3>
             <div className="container d-flex flex-wrap">
                     {products.map((product) => {
-                        return <ProductItem key={product._id} product={product}/>
+                        return <ProductItem key={product._id} product={product} setEvent={props.setEvent}/>
                     })}
 
             </div>
