@@ -24,8 +24,10 @@ const productRouter = require('./routes/productRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 const showtimeRouter = require('./routes/showTimeRoutes')
 //const orderRouter = require('./routes/orderRoutes');
-app.use(cors());
-
+app.use(cors({
+  origin: 'http://localhost:3000', // Update with your frontend origin
+  credentials: true,
+}));
 // middleware
 const notFoundMiddleware = require('./middleware/not-found');
 const errorHandlerMiddleware = require('./middleware/error-handler');
