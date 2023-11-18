@@ -19,6 +19,11 @@ const ShowtimeSchema = mongoose.Schema({
     ref: 'Product',
     required: true,
   },
+  price: {
+    type: Number,
+    required: [true, 'Please provide product price'],
+    default: 0,
+  },
 },
 { timestamps: true }
 );
