@@ -1,57 +1,37 @@
 const mongoose = require('mongoose');
 
-const ProductSchema = new mongoose.Schema(
+const movieSchema = new mongoose.Schema(
   {
     name: {
       type: String,
       trim: true,
-      required: [true, 'Please provide product name'],
+      required: [true, 'Please provide movie name'],
       maxlength: [100, 'Name can not be more than 100 characters'],
-    },
-    price: {
-      type: Number,
-      required: [true, 'Please provide product price'],
-      default: 0,
     },
     description: {
       type: String,
-      required: [true, 'Please provide product description'],
-      maxlength: [1000, 'Description can not be more than 1000 characters'],
+      required: [true, 'Please provide movie description'],
+      maxlength: [2000, 'Description can not be more than 1000 characters'],
     },
     image: {
       type: String,
       default: '/uploads/example.jpeg',
     },
-    category: {
-      type: String,
-      required: [true, 'Please provide product category'],
-      enum: ['office', 'kitchen', 'bedroom'],
-    },
-    company: {
-      type: String,
-      required: [true, 'Please provide company'],
+    genre: {
+      type: [String],
+      required: [true, 'Please provide movie genre'],
       enum: {
-        values: ['ikea', 'liddy', 'marcos'],
-        message: '{VALUE} is not supported',
+        values: ['Action', 'Adventure', 'Comedy','Horror','Romance','Thriller','Sci-Fi','Drama'],
+        message: '{VALUE} is not supported as genre',
       },
     },
-    colors: {
-      type: [String],
-      default: ['#222'],
-      required: true,
+    cast: {
+      type: [String], 
+      required: false,
     },
-    featured: {
-      type: Boolean,
-      default: false,
-    },
-    freeShipping: {
-      type: Boolean,
-      default: false,
-    },
-    inventory: {
-      type: Number,
-      required: true,
-      default: 15,
+    director: {
+      type: String,
+      required: false,
     },
     averageRating: {
       type: Number,
@@ -70,23 +50,23 @@ const ProductSchema = new mongoose.Schema(
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
-ProductSchema.virtual('reviews', {
+movieSchema.virtual('reviews', {
   ref: 'Review',
   localField: '_id',
-  foreignField: 'product',
+  foreignField: 'movie',
   justOne: false,
 });
 
-ProductSchema.virtual('showtimes', {
+movieSchema.virtual('showtimes', {
   ref: 'ShowTime',
   localField: '_id',
-  foreignField: 'product',
+  foreignField: 'movie',
   justOne: false,
 });
 
-ProductSchema.pre('remove', async function (next) {
-  await this.model('Review').deleteMany({ product: this._id });
-  await this.model('ShowTime').deleteMany({ product: this._id });
+movieSchema.pre('remove', async function (next) {
+  await this.model('Review').deleteMany({ movie: this._id });
+  await this.model('ShowTime').deleteMany({ movie: this._id });
 });
 
-module.exports = mongoose.model('Product', ProductSchema);
+module.exports = mongoose.model('movie', movieSchema);
