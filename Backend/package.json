@@ -1,5 +1,5 @@
 {
-  "name": "Movie-Booking-System",
+  "name": "movie-booking-system",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
@@ -24,8 +24,8 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.0.8",
     "morgan": "^1.10.0",
-    "validator": "^13.6.0",
-    "xss-clean": "^0.1.1"
+    "stripe": "^14.5.0",
+    "validator": "^13.6.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.9"
