@@ -10,7 +10,7 @@ const cookieParser = require('cookie-parser');
 const fileUpload = require('express-fileupload');
 const rateLimiter = require('express-rate-limit');
 const helmet = require('helmet');
-const xss = require('xss-clean');
+//const xss = require('xss-clean');
 const cors = require('cors');
 const mongoSanitize = require('express-mongo-sanitize');
 
@@ -23,9 +23,9 @@ const userRouter = require('./routes/userRoutes');
 const productRouter = require('./routes/productRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 const showtimeRouter = require('./routes/showTimeRoutes')
-//const orderRouter = require('./routes/orderRoutes');
+const orderRouter = require('./routes/orderRoutes');
 app.use(cors({
-  origin: 'http://localhost:3000', // Update with your frontend origin
+  origin: 'http://localhost:5000', // Update with your frontend origin
   credentials: true,
 }));
 // middleware
@@ -46,7 +46,7 @@ app.use(mongoSanitize());
 app.use(express.json());
 app.use(cookieParser(process.env.JWT_SECRET));
 
-//app.use(express.static('./public'));
+app.use(express.static('./public'));
 app.use(fileUpload());
 
 app.use('/api/v1/auth', authRouter);
@@ -54,7 +54,7 @@ app.use('/api/v1/users', userRouter);
 app.use('/api/v1/products', productRouter);
 app.use('/api/v1/reviews', reviewRouter);
 app.use('/api/v1/showtimes',showtimeRouter);
-//app.use('/api/v1/orders', orderRouter);
+app.use('/api/v1/orders', orderRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
