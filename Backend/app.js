@@ -25,7 +25,7 @@ const reviewRouter = require('./routes/reviewRoutes');
 const showtimeRouter = require('./routes/showTimeRoutes')
 const orderRouter = require('./routes/orderRoutes');
 app.use(cors({
-  origin: 'http://localhost:5000', // Update with your frontend origin
+  origin: 'http://localhost:3000', // Update with your frontend origin
   credentials: true,
 }));
 // middleware
@@ -33,15 +33,15 @@ const notFoundMiddleware = require('./middleware/not-found');
 const errorHandlerMiddleware = require('./middleware/error-handler');
 
 app.set('trust proxy', 1);
-app.use(
-  rateLimiter({
-    windowMs: 15 * 60 * 1000,
-    max: 60,
-  })
-);
-app.use(helmet());
-//app.use(xss());
-app.use(mongoSanitize());
+// app.use(
+//   rateLimiter({
+//     windowMs: 15 * 60 * 1000,
+//     max: 60,
+//   })
+// );
+// app.use(helmet());
+// //app.use(xss());
+// app.use(mongoSanitize());
 
 app.use(express.json());
 app.use(cookieParser(process.env.JWT_SECRET));

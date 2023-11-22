@@ -19,13 +19,14 @@ const Login = (props) => {
         body: JSON.stringify({ email, password }),
         credentials: 'include',
       });
+      
       const data = await response.json();
         console.log(data);
       if (response.ok) {
         
         // Redirect to the home page after successful login
-        console.log(document.cookie)
         props.setUser(data);
+        
         navigate('/', { replace: true });
       } else {
         const data = await response.json();

@@ -1,9 +1,15 @@
 import React from "react";
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 export default function Navbar(props) {
+  const navigate= useNavigate();
+  const deleteCookie = (name) => {
+    document.cookie = `${name}=; max-age=0; path=/;`;
+  };
   const handleClick = ()=>{
+    deleteCookie('token');
     props.setUser({});
+    navigate('/', { replace: true });
   }
   return (
     <>
@@ -23,7 +29,7 @@ export default function Navbar(props) {
                     </li>
                 </ul>
                 <form className="d-flex">
-                {Object.keys(props.user).length === 0 ? (
+                {Object.keys(props.user).length === 0 ? ( 
                 // If user is empty, show Login button
                 <Link to="/login" className="btn btn-outline-primary"><i className="fa-solid fa-arrow-right-to-bracket mx-1"></i>Login</Link>
               ) : (
