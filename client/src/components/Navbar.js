@@ -4,9 +4,10 @@ import { Link, useNavigate } from 'react-router-dom'
 export default function Navbar(props) {
   const navigate= useNavigate();
   const deleteCookie = (name) => {
-    document.cookie = `${name}=; max-age=0; path=/;`;
+    document.cookie = `${name}=expired; max-age=0; path=/;`;
   };
-  const handleClick = ()=>{
+  const handleClick = (e)=>{
+    e.preventDefault();
     deleteCookie('token');
     props.setUser({});
     navigate('/', { replace: true });
