@@ -13,6 +13,7 @@ import About from './components/About.js';
 import Admin from './components/Admin.js';
 import Book from './components/Book.js';
 import OrderStatus from './components/OrderStatus.js';
+import Dashboard from './components/Dashboard';
 
 function App() {
   const [user, setUser] = useState({});
@@ -57,6 +58,7 @@ function App() {
           <Route exact path='/about' element={<About/>}/>
           <Route exact path='/admin' element={<Admin/>}/>
           <Route exact path='/bookingstatus/:id' element={<OrderStatus/>}/>
+          <Route exact path='/dashboard' element={<Dashboard />} />
         </Routes>
       </Router>
     </div>
