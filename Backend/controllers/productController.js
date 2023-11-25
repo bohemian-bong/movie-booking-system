@@ -117,7 +117,6 @@ const getStat = async (req, res) => {
   }
 };
 
-
 module.exports = {
   createProduct,
   getAllProducts,
