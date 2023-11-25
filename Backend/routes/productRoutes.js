@@ -12,6 +12,7 @@ const {
   updateProduct,
   deleteProduct,
   uploadImage,
+  getStat
 } = require('../controllers/productController');
 
 const { getSingleProductReviews } = require('../controllers/reviewController');
@@ -34,5 +35,5 @@ router
 
 router.route('/:id/reviews').get(getSingleProductReviews);
 router.route('/:id/showtimes').get(getSingleProductShowTimes);
-
+router.route('/stat/rating').get(getStat);
 module.exports = router;
