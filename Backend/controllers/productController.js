@@ -1,8 +1,13 @@
-
 const Product = require('../models/Product');
 const { StatusCodes } = require('http-status-codes');
 const CustomError = require('../errors');
 const path = require('path');
+
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
+const fs = require('fs');
+const imagesFolderPath = './public/uploads';
+const pythonScriptPath = './plot.py'; // Replace with the actual path
 
 const createProduct = async (req, res) => {
   req.body.user = req.user.userId;
@@ -77,6 +82,42 @@ const uploadImage = async (req, res) => {
   res.status(StatusCodes.OK).json({ image: `/uploads/${productImage.name}` });
 };
 
+const getStat = async (req, res) => {
+  try {
+    // Execute the Python script to generate images
+    const { stdout, stderr } = await exec(`python ${pythonScriptPath}`);
+
+    if (stderr) {
+      console.error(`Error executing Python script: ${stderr}`);
+      return res.status(500).send('Error generating images');
+    }
+
+    // Read the generated images
+    const movieRatingsImagePath = path.join(imagesFolderPath, 'top_rated_movies.jpg');
+    const numOfReviewsImagePath = path.join(imagesFolderPath, 'top_reviewed_movies.jpg');
+
+    if (!fs.existsSync(movieRatingsImagePath) || !fs.existsSync(numOfReviewsImagePath)) {
+      console.error('Error: Plot images not found');
+      return res.status(500).send('Error generating images');
+    }
+
+    const movieRatingsImage = fs.readFileSync(movieRatingsImagePath);
+    const numOfReviewsImage = fs.readFileSync(numOfReviewsImagePath);
+
+    // Set the content type to image/jpeg
+    res.contentType('image/jpeg');
+
+    // Send the images as the response
+    res.write(movieRatingsImage, 'binary');
+    res.write(numOfReviewsImage, 'binary');
+    res.end(null, 'binary');
+  } catch (error) {
+    console.error(`Error executing Python script: ${error.message}`);
+    res.status(500).send('Error generating images');
+  }
+};
+
+
 module.exports = {
   createProduct,
   getAllProducts,
@@ -84,4 +125,5 @@ module.exports = {
   updateProduct,
   deleteProduct,
   uploadImage,
+  getStat
 };
