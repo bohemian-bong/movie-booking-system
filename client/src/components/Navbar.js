@@ -3,14 +3,19 @@ import { Link, useNavigate } from 'react-router-dom'
 
 export default function Navbar(props) {
   const navigate= useNavigate();
-  const deleteCookie = (name) => {
-    document.cookie = `${name}=expired; max-age=0; path=/;`;
+  const logout = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/v1/auth/logout`, {
+        method: 'GET',
+      });
+      const json = await response.json();
+    } catch (error) {
+      console.error('Error fetching reviews:', error.message);
+    }
   };
   const handleClick = (e)=>{
-    e.preventDefault();
-    deleteCookie('token');
-    props.setUser({});
-    navigate('/', { replace: true });
+    logout();
+    
   }
   return (
     <>
@@ -29,6 +34,7 @@ export default function Navbar(props) {
                     <Link className="nav-link" to="/about">About</Link>
                     </li>
                 </ul>
+                {props.admin?<Link to="/dashboard" className="btn btn-outline-primary"><i className="fa-solid fa-arrow-right-to-bracket mx-1"></i>Dashboard</Link>:<div></div>}
                 <form className="d-flex">
                 {Object.keys(props.user).length === 0 ? ( 
                 // If user is empty, show Login button

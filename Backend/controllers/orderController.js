@@ -17,12 +17,12 @@ const fakeStripeAPI = async ({ amount, currency }) => {
 const createOrder = async (req, res) => {
   const { showtime, amount , date } = req.body;
 
-  if (!showtime) {
-    throw new CustomError.BadRequestError('No showtime provided');
+  if (!showtime|| !date) {
+    throw new CustomError.BadRequestError('Please Provide Showtime and Date');
   }
-  if (!amount || !date) {
+  if (!amount ) {
     throw new CustomError.BadRequestError(
-      'Please provide amount(of tickets) and the date of the movie'
+      'Please provide amount(of tickets) .'
     );
   }
 

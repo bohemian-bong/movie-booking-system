@@ -56,7 +56,17 @@ const Event = (props) => {
 
     getShowtimes();
   }, [id]);
-
+  const refreshProduct = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/v1/products/${id}`, {
+        method: 'GET',
+      });
+      const json = await response.json();
+      setMovie(json.product);
+    } catch (error) {
+      console.error('Error fetching product:', error.message);
+    }
+  };
   const handleAddReview = async () => {
     try {
       const response = await fetch('http://localhost:5000/api/v1/reviews', {
@@ -83,6 +93,7 @@ const Event = (props) => {
           comment: '',
         });
         setAlertMessage({ type: 'success', message: 'Review added successfully!' });
+        refreshProduct();
       } else {
         setAlertMessage({ type: 'danger', message: json.msg });
       }
@@ -96,7 +107,7 @@ const Event = (props) => {
       <div className="row justify-content-center">
         <div className="col-md-8">
           <div className="card mb-5">
-            <img src={`http://localhost:5000${movie.image}`} className="card-img-top img-thumbnail" alt={movie.name} />
+            <img src={`http://localhost:5000${movie.image}`} className="card-img-top img-thumbnail d-block mx-auto" style={{ maxWidth: '50%' }} alt={movie.name} />
             <div className="card-body">
               <h5 className="card-title">{movie.name}</h5>
               <p className="card-text">Rating: {movie.averageRating}</p>
@@ -200,7 +211,7 @@ const Event = (props) => {
                     onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
                   ></textarea>
                 </div>
-                <button className="btn btn-primary" onClick={handleAddReview}>
+                <button className={`${Object.keys(props.user).length === 0 ?'btn btn-primary disabled mt-2':'btn btn-primary mt-2'}`} onClick={handleAddReview}>
                   Add Review
                 </button>
               </div>

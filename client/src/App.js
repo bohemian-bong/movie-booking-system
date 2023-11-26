@@ -17,6 +17,7 @@ import Dashboard from './components/Dashboard';
 
 function App() {
   const [user, setUser] = useState({});
+  const [admin, setAdmin] = useState(0);
   useEffect(() => {
     const getUserDetails = async () => {
       const response = await fetch('http://localhost:5000/api/v1/users/showMe', {
@@ -47,10 +48,10 @@ function App() {
   return (
     <div className="App">
       <Router>
-        <Navbar user={user} setUser={setUser}/>
+        <Navbar user={user} setUser={setUser} admin={admin}/>
         <Routes>
           <Route exact path='/' element={<Home/> }/>
-          <Route exact path='/login' element={<Login setUser={setUser} />}/>
+          <Route exact path='/login' element={<Login setUser={setUser} setAdmin={setAdmin} />}/>
           <Route exact path='/profile' element={<Profile user={user}/>}/>
           <Route exact path='/event/:id' element={<Event user={user}/>}/>
           <Route exact path='/book/:id' element={<Book user={user}/>}/>

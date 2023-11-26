@@ -1,3 +1,4 @@
+// Signup.js
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -7,6 +8,8 @@ const Signup = (props) => {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
   const setUser = props.setUser;
+  const [error, setError] = useState('');
+
   const handleSignup = async (e) => {
     e.preventDefault();
 
@@ -18,19 +21,20 @@ const Signup = (props) => {
         },
         body: JSON.stringify({ name, email, password }),
       });
-      const data = await response.json();
+
       if (response.ok) {
+        const data = await response.json();
         // Signup successful
         // Redirect to the home page after successful signup
-        
-        console.log(data)
-        setUser(data)
+        setUser(data);
         navigate('/', { replace: true });
       } else {
-        console.error('Signup failed:', data.message);
+        const data = await response.json();
+        setError(data.msg); // Set error message for display
       }
     } catch (error) {
-      console.error('Signup failed:', error.message);
+      console.error('Signup failed:', error.msg);
+      setError('An unexpected error occurred.'); // Set error message for display
     }
   };
 
@@ -41,6 +45,7 @@ const Signup = (props) => {
           <div className="card">
             <div className="card-body">
               <h2 className="card-title text-center">Signup</h2>
+              {error && <div className="alert alert-danger" role="alert">{error}</div>}
               <form onSubmit={handleSignup}>
                 <div className="mb-3">
                   <label htmlFor="name" className="form-label">

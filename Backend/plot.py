@@ -17,12 +17,12 @@ movies_collection = db["movies"]
 # Query the top 10 movies with the highest average rating
 top_rated_movies = movies_collection.find(
     {}, {"name": 1, "averageRating": 1, "numOfReviews": 1}
-).sort("averageRating", pymongo.DESCENDING).limit(3)
+).sort("averageRating", pymongo.DESCENDING).limit(10)
 
 # Query the top 10 movies with the highest number of reviews
 most_reviewed_movies = movies_collection.find(
     {}, {"name": 1, "averageRating": 1, "numOfReviews": 1}
-).sort("numOfReviews", pymongo.DESCENDING).limit(3)
+).sort("numOfReviews", pymongo.DESCENDING).limit(10)
 
 # Extract data for plotting (top 10 rated movies)
 top_rated_movie_names = []

@@ -6,6 +6,7 @@ const Login = (props) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const [error, setError] = useState('');
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -19,21 +20,23 @@ const Login = (props) => {
         body: JSON.stringify({ email, password }),
         credentials: 'include',
       });
-      
-      const data = await response.json();
-        console.log(data);
+
       if (response.ok) {
-        
+        const data = await response.json();
         // Redirect to the home page after successful login
         props.setUser(data);
-        
+        if (data.user.role === 'admin')
+          props.setAdmin(1);
+        else
+          props.setAdmin(0)
         navigate('/', { replace: true });
       } else {
         const data = await response.json();
-        console.error('Login failed:', data.message);
+        setError(data.msg); // Set error message for display
       }
     } catch (error) {
-      console.error('Login failed:', error.message);
+      console.error('Login failed:', error.msg);
+      setError('An unexpected error occurred.'); // Set error message for display
     }
   };
 
@@ -44,6 +47,7 @@ const Login = (props) => {
           <div className="card">
             <div className="card-body">
               <h2 className="card-title text-center">Login</h2>
+              {error && <div className="alert alert-danger" role="alert">{error}</div>}
               <form onSubmit={handleLogin}>
                 <div className="mb-3">
                   <label htmlFor="email" className="form-label">

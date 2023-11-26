@@ -17,6 +17,7 @@ const Book = (props) => {
   const [bookingDate, setBookingDate] = useState('');
   const [bookingId, setBookingId] = useState('');
   const [pintentId, setPintentId] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -69,12 +70,25 @@ const Book = (props) => {
         // Update the total amount based on the server's response
         // Show the "Pay" button or any additional steps
       } else {
-        console.error('Error creating order:', response.statusText);
+        const data = await response.json();
+        setError(data.msg); // Set error message for display
+
+        // Clear the error message after 5 seconds
+        setTimeout(() => {
+          setError('');
+        }, 5000);
       }
     } catch (error) {
-      console.error('Error creating order:', error.message);
+      console.error('Error creating order:', error.msg);
+      setError('An unexpected error occurred.'); // Set error message for display
+
+      // Clear the error message after 5 seconds
+      setTimeout(() => {
+        setError('');
+      }, 5000);
     }
   };
+
   const handlePayment = async () => {
     try {
       // Make a fetch call to create the order
@@ -93,10 +107,22 @@ const Book = (props) => {
         // Show the "Pay" button or any additional steps
         navigate(`/bookingstatus/${bookingId}`, { replace: true });
       } else {
-        console.error('Error creating order:', response.statusText);
+        const data = await response.json();
+        setError(data.msg); // Set error message for display
+
+        // Clear the error message after 5 seconds
+        setTimeout(() => {
+          setError('');
+        }, 5000);
       }
     } catch (error) {
-      console.error('Error creating order:', error.message);
+      console.error('Error creating order:', error.msg);
+      setError('An unexpected error occurred.'); // Set error message for display
+
+      // Clear the error message after 5 seconds
+      setTimeout(() => {
+        setError('');
+      }, 5000);
     }
 
   };
@@ -105,6 +131,7 @@ const Book = (props) => {
     <>
     <div className="container mt-5">
     <h1 className="mb-4">Book Tickets</h1>
+    {error && <div className="alert alert-danger" role="alert">{error}</div>}
     <div className="mb-3">
       <label className="form-label">Date:</label>
       <input type="date" className="form-control" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} />

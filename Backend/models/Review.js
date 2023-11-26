@@ -46,7 +46,7 @@ ReviewSchema.statics.calculateAverageRating = async function (productId) {
   ]);
 
   try {
-    await this.model('Product').findOneAndUpdate(
+    await this.model('movie').findOneAndUpdate(
       { _id: productId },
       {
         averageRating: Math.ceil(result[0]?.averageRating || 0),

@@ -21,7 +21,7 @@ const movieSchema = new mongoose.Schema(
       type: [String],
       required: [true, 'Please provide movie genre'],
       enum: {
-        values: ['Action', 'Adventure', 'Comedy','Horror','Romance','Thriller','Sci-Fi','Drama'],
+        values: ['Action', 'Adventure', 'Comedy','Horror','Romance','Thriller','Sci-Fi','Drama','Crime'],
         message: '{VALUE} is not supported as genre',
       },
     },

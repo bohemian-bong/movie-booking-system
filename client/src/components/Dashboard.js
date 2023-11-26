@@ -3,23 +3,25 @@ import React, { useState, useEffect } from 'react';
 const Dashboard = () => {
   const [products, setProducts] = useState([]);
   const [showtimes, setShowtimes] = useState([]);
-  const [showtimestitle, setshowtimestitle] = useState("");
+  const [showtimestitle, setshowtimestitle] = useState('');
   const [newProduct, setNewProduct] = useState({
     name: '',
     description: '',
     genre: [],
     cast: [],
     director: '',
-    image: null, // New state property for storing the image file
+    image: null,
   });
   const [newShowtime, setNewShowtime] = useState({
     startAt: '',
     startDate: '',
     endDate: '',
-    price: ''
+    price: '',
   });
 
-  // New state property for storing the image file name
+  const [productAlert, setProductAlert] = useState(null);
+  const [showtimeAlert, setShowtimeAlert] = useState(null);
+
   const [movieid, setmovieid] = useState('');
 
   useEffect(() => {
@@ -45,7 +47,7 @@ const Dashboard = () => {
       });
       const json = await response.json();
       setShowtimes(json.showtimes);
-      setshowtimestitle(productName)
+      setshowtimestitle(productName);
       setmovieid(productId);
     } catch (error) {
       console.error('Error fetching showtimes:', error.message);
@@ -57,47 +59,47 @@ const Dashboard = () => {
       const formData = new FormData();
       formData.append('name', newProduct.name);
       formData.append('description', newProduct.description);
-      formData.append('genre', newProduct.genre.join(', '));
+      formData.append('genre', newProduct.genre);
       formData.append('cast', newProduct.cast.join(', '));
       formData.append('director', newProduct.director);
-  
+
       if (newProduct.image) {
-        // If there is an image, append it to FormData
-  
-        // Upload the image separately
         const imageFormData = new FormData();
         imageFormData.append('image', newProduct.image, `${newProduct.name}.jpg`);
-  
+
         const imageResponse = await fetch('http://localhost:5000/api/v1/products/uploadImage', {
           method: 'POST',
           body: imageFormData,
-          credentials: 'include'
+          credentials: 'include',
         });
-  
-        const imageJson = await imageResponse.json();
-  
 
-        // Append the image file name to FormData
+        const imageJson = await imageResponse.json();
+
         formData.append('image', `/uploads/${newProduct.name}.jpg`);
         if (imageResponse.ok) {
-          // Set the image file name in the state
         } else {
           console.error('Error uploading image:', imageJson.message);
-          // Handle the error (e.g., show a message to the user)
+          setProductAlert({ type: 'danger', message: 'Error uploading image. Please try again.' });
+          setTimeout(() => {
+            setProductAlert({});
+          }, 5000);
           return;
         }
       }
-  
+
       const response = await fetch('http://localhost:5000/api/v1/products', {
         method: 'POST',
         credentials: 'include',
         body: formData,
       });
       const json = await response.json();
-  
+
       if (response.ok) {
         setProducts((prevProducts) => [...prevProducts, json.product]);
-        // Clear the form after creating the product
+        setProductAlert({ type: 'success', message: 'Product created successfully!' });
+        setTimeout(() => {
+          setProductAlert({});
+        }, 5000);
         setNewProduct({
           name: '',
           description: '',
@@ -108,9 +110,17 @@ const Dashboard = () => {
         });
       } else {
         console.error('Error creating product:', json.message);
+        setProductAlert({ type: 'danger', message: 'Error creating product. Please try again.' });
+        setTimeout(() => {
+          setProductAlert({});
+        }, 5000);
       }
     } catch (error) {
       console.error('Error creating product:', error.message);
+      setProductAlert({ type: 'danger', message: 'An unexpected error occurred.' });
+      setTimeout(() => {
+        setProductAlert({});
+      }, 5000);
     }
   };
 
@@ -127,25 +137,36 @@ const Dashboard = () => {
           startAt: newShowtime.startAt,
           startDate: new Date(newShowtime.startDate).toISOString(),
           endDate: new Date(newShowtime.endDate).toISOString(),
-          price: newShowtime.price
+          price: newShowtime.price,
         }),
       });
       const json = await response.json();
 
       if (response.ok) {
         setShowtimes((prevShowtimes) => [...prevShowtimes, json.showtime]);
-        // Clear the form after creating the showtime
+        setShowtimeAlert({ type: 'success', message: 'Showtime created successfully!' });
+        setTimeout(() => {
+          setShowtimeAlert({});
+        }, 5000);
         setNewShowtime({
           startAt: '',
           startDate: '',
           endDate: '',
-          price: ''
+          price: '',
         });
       } else {
         console.error('Error creating showtime:', json.message);
+        setShowtimeAlert({ type: 'danger', message: 'Error creating showtime. Please try again.' });
+        setTimeout(() => {
+          setShowtimeAlert({});
+        }, 5000);
       }
     } catch (error) {
       console.error('Error creating showtime:', error.message);
+      setShowtimeAlert({ type: 'danger', message: 'An unexpected error occurred.' });
+      setTimeout(() => {
+        setShowtimeAlert({});
+      }, 5000);
     }
   };
 
@@ -157,6 +178,15 @@ const Dashboard = () => {
   return (
     <div className="container mt-5">
       <h3 className="my-4">Products Dashboard</h3>
+
+      {/* Product Alert */}
+      {productAlert && (
+        <div className={`alert alert-${productAlert.type} alert-dismissible fade show`} role="alert">
+          {productAlert.message}
+          <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close" onClick={() => setProductAlert(null)}></button>
+        </div>
+      )}
+
       <div className="container d-flex flex-wrap">
         {products.map((product) => (
           <div key={product._id} className="card m-2" style={{ width: '18rem' }}>
@@ -164,10 +194,7 @@ const Dashboard = () => {
             <div className="card-body">
               <h5 className="card-title">{product.name}</h5>
               <p className="card-text">{product.description}</p>
-              <button
-                className="btn btn-primary"
-                onClick={() => loadShowtimesForProducts(product._id, product.name)}
-              >
+              <button className="btn btn-primary" onClick={() => loadShowtimesForProducts(product._id, product.name)}>
                 Show Showtimes
               </button>
             </div>
@@ -178,10 +205,12 @@ const Dashboard = () => {
       <div className="card m-2" style={{ width: '24rem' }}>
         <div className="card-body">
           <h5 className="card-title">Create New Product</h5>
-          <form onSubmit={(e) => {
-            e.preventDefault();
-            handleCreateProduct();
-          }}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleCreateProduct();
+            }}
+          >
             <div className="form-group">
               <label htmlFor="name">Name</label>
               <input
@@ -204,14 +233,16 @@ const Dashboard = () => {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="genre">Genre (Comma-separated)</label>
+              <label htmlFor="genre">Genre</label>
               <input
                 type="text"
                 className="form-control"
                 id="genre"
                 name="genre"
                 value={newProduct.genre.join(', ')}
-                onChange={(e) => setNewProduct({ ...newProduct, genre: e.target.value.split(',').map(s => s.trim()) })}
+                onChange={(e) =>
+                  setNewProduct({ ...newProduct, genre: e.target.value.split(',').map((s) => s.trim()) })
+                }
               />
             </div>
             <div className="form-group">
@@ -222,7 +253,7 @@ const Dashboard = () => {
                 id="cast"
                 name="cast"
                 value={newProduct.cast}
-                onChange={(e) => setNewProduct({ ...newProduct, cast: e.target.value.split(',').map(s => s.trim()) })}
+                onChange={(e) => setNewProduct({ ...newProduct, cast: e.target.value.split(',').map((s) => s.trim()) })}
               />
             </div>
             <div className="form-group">
@@ -236,7 +267,6 @@ const Dashboard = () => {
                 onChange={(e) => setNewProduct({ ...newProduct, director: e.target.value })}
               />
             </div>
-            {/* New input for image file */}
             <div className="form-group">
               <label htmlFor="image">Image</label>
               <input
@@ -247,19 +277,30 @@ const Dashboard = () => {
                 onChange={(e) => setNewProduct({ ...newProduct, image: e.target.files[0] })}
               />
             </div>
-            <button type="submit" className="btn btn-primary my-2">Create Product</button>
+            <button type="submit" className="btn btn-primary my-2">
+              Create Product
+            </button>
           </form>
         </div>
       </div>
 
+      {/* Showtime Alert */}
+      {showtimeAlert && (
+        <div className={`alert alert-${showtimeAlert.type} alert-dismissible fade show`} role="alert">
+          {showtimeAlert.message}
+          <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close" onClick={() => setShowtimeAlert(null)}></button>
+        </div>
+      )}
+
       <div className="card m-2" style={{ width: '24rem' }}>
         <div className="card-body">
           <h5 className="card-title">Create New Showtime for {showtimestitle}</h5>
-          <form onSubmit={(e) => {
-            e.preventDefault();
-            handleCreateShowtime();
-          }}>
-            {/* Form fields for creating a new showtime */}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleCreateShowtime();
+            }}
+          >
             <div className="form-group">
               <label htmlFor="startAt">Start Time</label>
               <input
@@ -304,7 +345,9 @@ const Dashboard = () => {
                 onChange={(e) => setNewShowtime({ ...newShowtime, price: e.target.value })}
               />
             </div>
-            <button type="submit" className="btn btn-primary my-2">Create Showtime</button>
+            <button type="submit" className="btn btn-primary my-2">
+              Create Showtime
+            </button>
           </form>
         </div>
       </div>
@@ -318,7 +361,9 @@ const Dashboard = () => {
             <div key={showtime._id} className="card m-2" style={{ width: '18rem' }}>
               <div className="card-body">
                 <h5 className="card-title">Start Time: {showtime.startAt}</h5>
-                <p className="card-text">{formatDate(showtime.startDate)} - {formatDate(showtime.endDate)}</p>
+                <p className="card-text">
+                  {formatDate(showtime.startDate)} - {formatDate(showtime.endDate)}
+                </p>
               </div>
             </div>
           ))}
